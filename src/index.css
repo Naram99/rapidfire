@@ -7,3 +7,9 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+:root {
+    --font-title: "Bebas Neue", sans-serif;
+    --font-page: "DM Sans", sans-serif;
+    --font-quiz: "DM Mono", monospace;
+}
