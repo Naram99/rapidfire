@@ -9,7 +9,7 @@ export default function Login() {
 
     const [userMail, setUserMail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     if (user !== null) {
         navigate("/dashboard", { replace: true });
@@ -17,17 +17,21 @@ export default function Login() {
     }
 
     function handleMailChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setUserMail(e.currentTarget.value);
+        setUserMail(e.currentTarget.value.trim());
     }
 
     function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setPassword(e.currentTarget.value);
+        setPassword(e.currentTarget.value.trim());
     }
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
         // TODO: Login logic
+        if (!userMail || !password) {
+            setError("Please fill both the email and password fields.");
+            return;
+        }
     }
 
     return (
@@ -40,7 +44,6 @@ export default function Login() {
                         type="email"
                         name="email"
                         id="email"
-                        required
                         onChange={handleMailChange}
                         value={userMail}
                     />
@@ -51,7 +54,6 @@ export default function Login() {
                         type="password"
                         name="password"
                         id="password"
-                        required
                         onChange={handlePasswordChange}
                         value={password}
                     />
