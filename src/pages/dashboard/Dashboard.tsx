@@ -47,21 +47,27 @@ export default function Dashboard() {
     return (
         <div className={styles.dashboardCt}>
             <h1>Dashboard</h1>
-            <button onClick={handleCreateLobby}>Create lobby</button>
-            <div>
+            <button type="button" onClick={handleCreateLobby}>
+                Create lobby
+            </button>
+            <div className={styles.joinLobby}>
                 <input
                     type="text"
                     placeholder="Lobby code"
                     onChange={handleLobbyChange}
                     value={lobbyCode}
                 />
-                <button onClick={handleJoinLobby}>Join lobby</button>
+                <button type="button" onClick={handleJoinLobby}>
+                    Join lobby
+                </button>
             </div>
             <div className={styles.errorCt}>{error && <p>{error}</p>}</div>
             <Link to="/profile">
-                <button>Profile</button>
+                <button type="button">Profile</button>
             </Link>
-            <button onClick={handleLogout}>Logout</button>
+            <button type="button" onClick={handleLogout}>
+                Logout
+            </button>
         </div>
     );
 }

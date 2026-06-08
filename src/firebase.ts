@@ -24,4 +24,4 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 export const fireBaseAuth = getAuth(app);
-export const fireBaseFunctions = getFunctions(app);
+export const fireBaseFunctions = getFunctions(app, "europe-west1");
