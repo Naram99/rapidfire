@@ -8,8 +8,34 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Profile from "./pages/profile/Profile";
 import Room from "./pages/room/Room";
 import Game from "./pages/game/Game";
+import AuthStore from "./zustand/authStore";
+import { useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { fireBaseAuth } from "./firebase";
+import Loading from "./Loading";
 
 function App() {
+    const isAuthLoading = AuthStore((state) => state.isLoading);
+    const setUser = AuthStore((state) => state.setUser);
+    const auth = fireBaseAuth;
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("User logged in");
+            } else {
+                console.error("User not authenticated");
+            }
+            setUser(user);
+        });
+
+        return () => unsubscribe();
+    }, [auth, setUser]);
+
+    if (isAuthLoading) {
+        return <Loading />;
+    }
+
     return (
         <BrowserRouter>
             <Routes>
@@ -28,4 +54,3 @@ function App() {
 }
 
 export default App;
-

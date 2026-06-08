@@ -85,3 +85,14 @@ a {
 body {
     background-color: var(--ash-900);
 }
+
+/* LOADING */
+
+.loadingCt {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    font-family: var(--font-title);
+    color: var(--primary-bg);
+}
