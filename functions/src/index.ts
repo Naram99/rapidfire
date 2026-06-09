@@ -10,8 +10,8 @@
 import { setGlobalOptions } from "firebase-functions";
 import { onRequest } from "firebase-functions/https";
 import * as logger from "firebase-functions/logger";
-import { createRoomCall } from "./createRoom";
-import { joinRoomCall } from "./joinRoom";
+import { createLobbyCall } from "./createRoom";
+import { joinLobbyCall } from "./joinRoom";
 import { updateCall } from "./update";
 
 // Start writing functions
@@ -37,7 +37,7 @@ export const helloWorld = onRequest(
     },
 );
 
-export const createRoom = createRoomCall;
-export const joinRoom = joinRoomCall;
+export const createLobby = createLobbyCall;
+export const joinLobby = joinLobbyCall;
 export const update = updateCall;
 

@@ -96,3 +96,17 @@ body {
     font-family: var(--font-title);
     color: var(--primary-bg);
 }
+
+/* ERROR */
+
+.errorCt {
+    min-height: 2.5rem;
+
+    p {
+        background-color: var(--error-bg);
+        color: var(--error-text);
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+    }
+}

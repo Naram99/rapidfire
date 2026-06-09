@@ -70,7 +70,7 @@ export default function Login() {
                         value={password}
                     />
                 </div>
-                <div className={styles.errorCt}>{error && <p>{error}</p>}</div>
+                <div className="errorCt">{error && <p>{error}</p>}</div>
                 <button type="submit">Log in</button>
             </form>
         </div>

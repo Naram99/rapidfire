@@ -4,6 +4,12 @@ import { fireBaseAuth, fireBaseFunctions } from "../../firebase";
 import { useState } from "react";
 import { httpsCallable } from "firebase/functions";
 
+type LobbyResponse = {
+    status: number;
+    lobbyId?: string;
+    message?: string;
+};
+
 export default function Dashboard() {
     const navigate = useNavigate();
     const auth = fireBaseAuth;
@@ -18,17 +24,22 @@ export default function Dashboard() {
     }
 
     async function handleCreateLobby() {
-        const createRoom = httpsCallable(functions, "createRoom");
+        const createLobby = httpsCallable(functions, "createLobby");
 
-        createRoom()
+        createLobby()
             .then((result) => {
                 if (result.data) {
-                    console.log(result.data);
+                    const response = result.data as LobbyResponse;
+                    if (response.status !== 201 || !response.lobbyId) {
+                        throw new Error("Not valid response");
+                    }
+
+                    navigate(`/lobby/${response.lobbyId}`);
                 }
             })
             .catch((err) => {
                 console.error(err);
-                setError("Cannot create room");
+                setError("Cannot create lobby");
             });
     }
 
@@ -61,7 +72,7 @@ export default function Dashboard() {
                     Join lobby
                 </button>
             </div>
-            <div className={styles.errorCt}>{error && <p>{error}</p>}</div>
+            <div className="errorCt">{error && <p>{error}</p>}</div>
             <Link to="/profile">
                 <button type="button">Profile</button>
             </Link>
