@@ -12,6 +12,7 @@ import { onRequest } from "firebase-functions/https";
 import * as logger from "firebase-functions/logger";
 import { createRoomCall } from "./createRoom";
 import { joinRoomCall } from "./joinRoom";
+import { updateCall } from "./update";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -38,4 +39,5 @@ export const helloWorld = onRequest(
 
 export const createRoom = createRoomCall;
 export const joinRoom = joinRoomCall;
+export const update = updateCall;
 

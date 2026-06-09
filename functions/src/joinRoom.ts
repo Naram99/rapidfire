@@ -4,7 +4,7 @@ import admin from "firebase-admin";
 
 admin.initializeApp();
 
-const db = admin.firestore();
+const db = admin.database();
 
 export const joinRoomCall = onCall(
     { region: "europe-west1" },
@@ -21,15 +21,15 @@ export const joinRoomCall = onCall(
             return { status: 400, message: "Room ID is required" };
         }
 
-        const roomRef = db.collection("rooms").doc(roomId);
-        const roomDoc = await roomRef.get();
+        const roomRef = db.ref(`rooms/${roomId}`);
+        const snapshot = await roomRef.get();
 
-        if (!roomDoc.exists) {
+        if (!snapshot.exists) {
             return { status: 404, message: "Room not found" };
         }
 
-        const membersRef = db.collection("rooms_members").doc(roomId);
-        await membersRef.set({ userId: true }, { merge: true });
+        const membersRef = db.ref(`rooms_members/${roomId}/${userId}`);
+        await membersRef.set(true);
 
         logger.info(`User joined room: ${roomId}`);
         return { status: 200, message: "Successfully joined room" };

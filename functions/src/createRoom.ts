@@ -4,7 +4,7 @@ import admin from "firebase-admin";
 
 admin.initializeApp();
 
-const db = admin.firestore();
+const db = admin.database();
 
 export const createRoomCall = onCall(
     { region: "europe-west1" },
@@ -19,14 +19,14 @@ export const createRoomCall = onCall(
         const roomId = generateRoomId(); // TODO: Implement a proper room ID generation logic
 
         // TODO: Change fixed room id to a generated one
-        const roomRef = db.collection("rooms").doc(roomId);
+        const roomRef = db.ref(`rooms/${roomId}`);
         await roomRef.set({
             host: userId,
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            createdAt: admin.database.ServerValue.TIMESTAMP,
         });
 
-        const membersRef = db.collection("rooms_members").doc(roomId);
-        await membersRef.set({ userId: true });
+        const membersRef = db.ref(`rooms_members/${roomId}/${userId}`);
+        await membersRef.set(true);
 
         logger.info(`Room created with ID: ${roomId}`);
         return { status: 201, roomId };
