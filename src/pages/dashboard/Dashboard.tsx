@@ -43,7 +43,25 @@ export default function Dashboard() {
             });
     }
 
-    async function handleJoinLobby() {}
+    async function handleJoinLobby() {
+        const joinLobby = httpsCallable(functions, "joinLobby");
+
+        joinLobby({ lobbyId: lobbyCode })
+            .then((result) => {
+                if (result.data) {
+                    const response = result.data as LobbyResponse;
+                    if (response.status !== 200 || !response.lobbyId) {
+                        throw new Error("Not valid response");
+                    }
+
+                    navigate(`/lobby/${response.lobbyId}`);
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                setError("Cannot join lobby");
+            });
+    }
 
     function handleLogout() {
         auth.signOut()

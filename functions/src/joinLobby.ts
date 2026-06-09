@@ -32,6 +32,6 @@ export const joinLobbyCall = onCall(
         await membersRef.set(true);
 
         logger.info(`User joined lobby: ${lobbyId}`);
-        return { status: 200, message: "Successfully joined lobby" };
+        return { status: 200, message: "Successfully joined lobby", lobbyId };
     },
 );

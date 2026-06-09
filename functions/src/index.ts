@@ -10,8 +10,8 @@
 import { setGlobalOptions } from "firebase-functions";
 import { onRequest } from "firebase-functions/https";
 import * as logger from "firebase-functions/logger";
-import { createLobbyCall } from "./createRoom";
-import { joinLobbyCall } from "./joinRoom";
+import { createLobbyCall } from "./createLobby";
+import { joinLobbyCall } from "./joinLobby";
 import { updateCall } from "./update";
 
 // Start writing functions
