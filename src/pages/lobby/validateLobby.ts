@@ -9,7 +9,7 @@ export async function checkLobbyExists(lobbyId: string): Promise<boolean> {
     return snapshot.exists();
 }
 
-export async function checkUserInLobby(
+export async function checkIfUserInLobby(
     lobbyId: string,
     userId: string,
 ): Promise<boolean> {
