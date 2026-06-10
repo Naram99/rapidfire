@@ -1,16 +1,16 @@
 import { onCall } from "firebase-functions/https";
 import * as logger from "firebase-functions/logger";
 import admin from "firebase-admin";
-import removeUserFromAllOtherLobbies from "./lobby/removeUserFromAllLobbies";
+import removeUserFromLobby from "./lobby/removeUserFromLobby";
 
 admin.initializeApp();
 
 const db = admin.database();
 
-export const joinLobbyCall = onCall(
+export const leaveLobbyCall = onCall(
     { region: "europe-west1" },
     async (request) => {
-        logger.info("Join lobby request received", { structuredData: true });
+        logger.info("Leave lobby request received", { structuredData: true });
 
         const userId = request.auth?.uid;
         if (!userId) {
@@ -25,21 +25,13 @@ export const joinLobbyCall = onCall(
         const lobbyRef = db.ref(`lobby/${lobbyId}`);
         const snapshot = await lobbyRef.get();
 
-        if (!snapshot.exists) {
-            return { status: 404, message: "Lobby not found" };
+        if (snapshot.exists()) {
+            await removeUserFromLobby(db, lobbyId, userId);
         }
 
-        await removeUserFromAllOtherLobbies(db, userId, lobbyId);
-
-        const membersRef = db.ref(`lobby_members/${lobbyId}/${userId}`);
-        await membersRef.set({ ready: false });
-
-        logger.info(`User joined lobby: ${lobbyId}`);
         return {
             status: 200,
-            message: "Successfully joined lobby",
-            lobbyId,
-            host: snapshot.val().host,
+            message: "Successfully left lobby",
         };
     },
 );

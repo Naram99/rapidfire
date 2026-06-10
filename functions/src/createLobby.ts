@@ -1,6 +1,7 @@
 import { onCall } from "firebase-functions/https";
 import * as logger from "firebase-functions/logger";
 import admin from "firebase-admin";
+import removeUserFromAllOtherLobbies from "./lobby/removeUserFromAllLobbies";
 
 admin.initializeApp();
 
@@ -18,7 +19,8 @@ export const createLobbyCall = onCall(
 
         const lobbyId = generateLobbyId(); // TODO: Implement a proper lobby ID generation logic
 
-        // TODO: Change fixed lobby id to a generated one
+        await removeUserFromAllOtherLobbies(db, userId, lobbyId);
+
         const lobbyRef = db.ref(`lobby/${lobbyId}`);
         await lobbyRef.set({
             host: userId,
@@ -26,10 +28,15 @@ export const createLobbyCall = onCall(
         });
 
         const membersRef = db.ref(`lobby_members/${lobbyId}/${userId}`);
-        await membersRef.set(true);
+        await membersRef.set({ ready: false });
 
         logger.info(`Lobby created with ID: ${lobbyId}`);
-        return { status: 201, lobbyId };
+        return {
+            status: 201,
+            lobbyId,
+            host: userId,
+            message: "Successfully created lobby",
+        };
     },
 );
 

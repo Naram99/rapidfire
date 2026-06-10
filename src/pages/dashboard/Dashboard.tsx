@@ -1,19 +1,15 @@
 import { Link, useNavigate } from "react-router";
 import styles from "./dashboard.module.css";
-import { fireBaseAuth, fireBaseFunctions } from "../../firebase";
+import { fireBaseAuth } from "../../firebase";
 import { useState } from "react";
-import { httpsCallable } from "firebase/functions";
-
-type LobbyResponse = {
-    status: number;
-    lobbyId?: string;
-    message?: string;
-};
+import LobbyStore from "../../zustand/lobbyStore";
 
 export default function Dashboard() {
     const navigate = useNavigate();
     const auth = fireBaseAuth;
-    const functions = fireBaseFunctions;
+
+    const createLobby = LobbyStore((state) => state.createLobby);
+    const joinLobby = LobbyStore((state) => state.joinLobby);
 
     const [lobbyCode, setLobbyCode] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -24,43 +20,23 @@ export default function Dashboard() {
     }
 
     async function handleCreateLobby() {
-        const createLobby = httpsCallable(functions, "createLobby");
-
-        createLobby()
-            .then((result) => {
-                if (result.data) {
-                    const response = result.data as LobbyResponse;
-                    if (response.status !== 201 || !response.lobbyId) {
-                        throw new Error("Not valid response");
-                    }
-
-                    navigate(`/lobby/${response.lobbyId}`);
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                setError("Cannot create lobby");
-            });
+        try {
+            const lobbyId = await createLobby();
+            navigate(`/lobby/${lobbyId}`);
+        } catch (err) {
+            console.error(err);
+            setError("Cannot create lobby");
+        }
     }
 
     async function handleJoinLobby() {
-        const joinLobby = httpsCallable(functions, "joinLobby");
-
-        joinLobby({ lobbyId: lobbyCode })
-            .then((result) => {
-                if (result.data) {
-                    const response = result.data as LobbyResponse;
-                    if (response.status !== 200 || !response.lobbyId) {
-                        throw new Error("Not valid response");
-                    }
-
-                    navigate(`/lobby/${response.lobbyId}`);
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                setError("Cannot join lobby");
-            });
+        try {
+            const lobbyId = await joinLobby(lobbyCode);
+            navigate(`/lobby/${lobbyId}`);
+        } catch (err) {
+            console.error(err);
+            setError("Cannot join lobby");
+        }
     }
 
     function handleLogout() {
@@ -76,6 +52,9 @@ export default function Dashboard() {
     return (
         <div className={styles.dashboardCt}>
             <h1>Dashboard</h1>
+            <Link to="/solo">
+                <button type="button">Solo play</button>
+            </Link>
             <button type="button" onClick={handleCreateLobby}>
                 Create lobby
             </button>
