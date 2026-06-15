@@ -4,6 +4,7 @@ import admin from "firebase-admin";
 import getLatestVersion from "./update/getLatestVersion";
 import getChampions from "./update/getChampions";
 import updateChampions from "./update/updateChampions";
+import type { DenormalizedChampionsData } from "./update/denormalizedChampionsData.type";
 
 admin.initializeApp();
 
