@@ -4,7 +4,6 @@ import admin from "firebase-admin";
 import getLatestVersion from "./update/getLatestVersion";
 import getChampions from "./update/getChampions";
 import updateChampions from "./update/updateChampions";
-import type { DenormalizedChampionsData } from "./update/denormalizedChampionsData.type";
 
 admin.initializeApp();
 
@@ -39,7 +38,14 @@ export const updateCall = onCall(
         await db
             .ref(`version/lastUpdate`)
             .set(admin.database.ServerValue.TIMESTAMP);
-        await db.ref(`champions`).set(championsData);
+        await db.ref(`champions`).set(championsData.champions);
+        await db.ref(`skins`).set(championsData.skins);
+        await db.ref(`chromas`).set(championsData.chromas);
+        await db.ref(`stats`).set(championsData.stats);
+        await db.ref(`spells`).set(championsData.spells);
+        await db.ref(`passive`).set(championsData.passive);
+        await db.ref(`tags`).set(championsData.tags);
+        await db.ref(`title`).set(championsData.title);
 
         logger.info("Update successful", { latestVersion });
         return { status: 200, message: "Update successful", latestVersion };

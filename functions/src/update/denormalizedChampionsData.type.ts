@@ -38,10 +38,22 @@ export type DenormalizedChampionsData = {
         };
     };
     spells: {
-        [championId: string]: {};
+        [championId: string]: {
+            [spellId: string]: {
+                name: string;
+                cooldown: string; // cooldownBurn
+                cost: string; // costBurn
+                range: string; // rangeBurn
+                damage: {}; // TODO: separate by damage type
+                icon: string; // image.full
+            };
+        };
     };
     passive: {
-        [championId: string]: {};
+        [championId: string]: {
+            name: string;
+            icon: string; // image.full
+        };
     };
     tags: {
         [championId: string]: { [tag: string]: boolean };
