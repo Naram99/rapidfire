@@ -1,0 +1,85 @@
+{
+    "baseStatsLvl1": {
+        "name": "Base stats level 1",
+        "collection": "stats",
+        "text": "Which champion has the {{questionType}} {{statType}} at level 1?",
+        "difficulty": {
+            "easy": {
+                "percentMinDifference": 0.3
+            },
+            "medium": {
+                "percentMinDifference": 0.1,
+                "percentMaxDifference": 0.3
+            },
+            "hard": {
+                "percentMaxDifference": 0.1
+            }
+        },
+        "allowedQuestionTypes": [
+            "min",
+            "max",
+            "min2nd",
+            "max2nd",
+            "exactMatch",
+            "lessThan",
+            "moreThan"
+        ],
+        "allowedStatTypes": [
+            {
+                "stat": "hp",
+                "text": "HP"
+            },
+            {
+                "stat": "mp",
+                "text": "mana"
+            },
+            {
+                "stat": "movespeed",
+                "text": "movement speed"
+            },
+            {
+                "stat": "armor",
+                "text": "armor"
+            },
+            {
+                "stat": "spellblock",
+                "text": "magic resist"
+            },
+            {
+                "stat": "attackrange",
+                "text": "attack range"
+            },
+            {
+                "stat": "hpregen",
+                "text": "HP regen"
+            },
+            {
+                "stat": "mpregen",
+                "text": "mana regen"
+            },
+            {
+                "stat": "attackdamage",
+                "text": "AD"
+            },
+            {
+                "stat": "attackspeed",
+                "text": "attack speed"
+            }
+        ]
+    },
+    "baseStatsPerLevel": {},
+    "baseStatsLvlRandom": {},
+    "skinNumber": {},
+    "skinType": {},
+    "chromaNumber": {},
+    "chromaType": {},
+    "chromaPerSkin": {},
+    "abilityDamageLvlRandom": {},
+    "abilityByIcon": {},
+    "abilityCooldown": {},
+    "abilityRange": {},
+    "abilityName": {},
+    "passiveName": {},
+    "tags": {},
+    "title": {}
+}
