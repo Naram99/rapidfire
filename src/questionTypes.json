@@ -1,0 +1,23 @@
+{
+    "min": {
+        "text": "least"
+    },
+    "max": {
+        "text": "most"
+    },
+    "min2nd": {
+        "text": "2nd least"
+    },
+    "max2nd": {
+        "text": "2nd most"
+    },
+    "exactMatch": {
+        "text": "exactly {{value}}"
+    },
+    "lessThan": {
+        "text": "less than {{value}}"
+    },
+    "moreThan": {
+        "text": "more than {{value}}"
+    }
+}
