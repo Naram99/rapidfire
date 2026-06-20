@@ -1,15 +1,15 @@
 {
     "min": {
-        "text": "least"
+        "text": "the least"
     },
     "max": {
-        "text": "most"
+        "text": "the most"
     },
     "min2nd": {
-        "text": "2nd least"
+        "text": "the 2nd least"
     },
     "max2nd": {
-        "text": "2nd most"
+        "text": "the 2nd most"
     },
     "exactMatch": {
         "text": "exactly {{value}}"

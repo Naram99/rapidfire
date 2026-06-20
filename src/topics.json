@@ -2,7 +2,7 @@
     "baseStatsLvl1": {
         "name": "Base stats level 1",
         "collection": "stats",
-        "text": "Which champion has the {{questionType}} {{statType}} at level 1?",
+        "text": "Which champion has {{questionType}} {{statType}} at level 1?",
         "difficulty": {
             "easy": {
                 "percentMinDifference": 0.3
