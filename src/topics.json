@@ -5,25 +5,45 @@
         "text": "Which champion has {{questionType}} {{statType}} at level 1?",
         "difficulty": {
             "easy": {
-                "percentMinDifference": 0.3
+                "percentMinDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
             },
             "medium": {
                 "percentMinDifference": 0.1,
-                "percentMaxDifference": 0.3
+                "percentMaxDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
             },
             "hard": {
-                "percentMaxDifference": 0.1
+                "percentMaxDifference": 0.1,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch"
+                ]
+            },
+            "challenger": {
+                "percentMaxDifference": 0.05,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch",
+                    "lessThan",
+                    "moreThan"
+                ]
             }
         },
-        "allowedQuestionTypes": [
-            "min",
-            "max",
-            "min2nd",
-            "max2nd",
-            "exactMatch",
-            "lessThan",
-            "moreThan"
-        ],
         "allowedStatTypes": [
             {
                 "stat": "hp",
@@ -67,11 +87,183 @@
             }
         ]
     },
-    "baseStatsPerLevel": {},
+    "baseStatsPerLevel": {
+        "name": "Base stats gained per level",
+        "collection": "stats",
+        "text": "Which champions gains {{questionType}} {{statType}} per level?",
+        "difficulty": {
+            "easy": {
+                "percentMinDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
+            },
+            "medium": {
+                "percentMinDifference": 0.1,
+                "percentMaxDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
+            },
+            "hard": {
+                "percentMaxDifference": 0.1,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch"
+                ]
+            },
+            "challenger": {
+                "percentMaxDifference": 0.05,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch",
+                    "lessThan",
+                    "moreThan"
+                ]
+            }
+        },
+        "allowedStatTypes": [
+            {
+                "stat": "hpperlevel",
+                "text": "HP"
+            },
+            {
+                "stat": "mpperlevel",
+                "text": "mana"
+            },
+            {
+                "stat": "armorperlevel",
+                "text": "armor"
+            },
+            {
+                "stat": "spellblockperlevel",
+                "text": "magic resist"
+            },
+            {
+                "stat": "hpregenperlevel",
+                "text": "HP regen"
+            },
+            {
+                "stat": "mpregenperlevel",
+                "text": "mana regen"
+            },
+            {
+                "stat": "attackdamageperlevel",
+                "text": "AD"
+            },
+            {
+                "stat": "attackspeedperlevel",
+                "text": "attack speed"
+            }
+        ]
+    },
     "baseStatsLvlRandom": {},
-    "skinNumber": {},
+    "skinNumber": {
+        "name": "Number of skins",
+        "collection": "skins",
+        "text": "Which champion has {{questionType}} number of skins?",
+        "difficulty": {
+            "easy": {
+                "percentMinDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
+            },
+            "medium": {
+                "percentMinDifference": 0.1,
+                "percentMaxDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
+            },
+            "hard": {
+                "percentMaxDifference": 0.1,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch"
+                ]
+            },
+            "challenger": {
+                "percentMaxDifference": 0.05,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch",
+                    "lessThan",
+                    "moreThan"
+                ]
+            }
+        },
+        "allowedStatTypes": "skinsCount"
+    },
     "skinType": {},
-    "chromaNumber": {},
+    "skinModified": {},
+    "chromaNumber": {
+        "name": "Number of chromas",
+        "collection": "chromas",
+        "text": "Which champion has {{questionType}} number of chromas?",
+        "difficulty": {
+            "easy": {
+                "percentMinDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
+            },
+            "medium": {
+                "percentMinDifference": 0.1,
+                "percentMaxDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
+            },
+            "hard": {
+                "percentMaxDifference": 0.1,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch"
+                ]
+            },
+            "challenger": {
+                "percentMaxDifference": 0.05,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch",
+                    "lessThan",
+                    "moreThan"
+                ]
+            }
+        },
+        "allowedStatTypes": "chromasCount"
+    },
     "chromaType": {},
     "chromaPerSkin": {},
     "abilityDamageLvlRandom": {},
