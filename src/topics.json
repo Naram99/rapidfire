@@ -2,6 +2,7 @@
     "baseStatsLvl1": {
         "name": "Base stats level 1",
         "collection": "stats",
+        "subjects": "champions",
         "text": "Which champion has {{questionType}} {{statType}} at level 1?",
         "difficulty": {
             "easy": {
@@ -90,6 +91,7 @@
     "baseStatsPerLevel": {
         "name": "Base stats gained per level",
         "collection": "stats",
+        "subjects": "champions",
         "text": "Which champions gains {{questionType}} {{statType}} per level?",
         "difficulty": {
             "easy": {
@@ -171,6 +173,7 @@
     "skinNumber": {
         "name": "Number of skins",
         "collection": "skins",
+        "subjects": "champions",
         "text": "Which champion has {{questionType}} number of skins?",
         "difficulty": {
             "easy": {
@@ -220,7 +223,8 @@
     "chromaNumber": {
         "name": "Number of chromas",
         "collection": "chromas",
-        "text": "Which champion has {{questionType}} number of chromas?",
+        "subjects": "champions",
+        "text": "Which champion has {{questionType}} chromas?",
         "difficulty": {
             "easy": {
                 "percentMinDifference": 0.3,
@@ -265,10 +269,103 @@
         "allowedStatTypes": "chromasCount"
     },
     "chromaType": {},
-    "chromaPerSkin": {},
+    "chromaPerSkin": {
+        "name": "Chromas per skin",
+        "collection": "chromas",
+        "subjects": "skins",
+        "text": "Which skin has {{questionType}} chromas?",
+        "difficulty": {
+            "easy": {
+                "percentMinDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
+            },
+            "medium": {
+                "percentMinDifference": 0.1,
+                "percentMaxDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
+            },
+            "hard": {
+                "percentMaxDifference": 0.1,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch"
+                ]
+            },
+            "challenger": {
+                "percentMaxDifference": 0.05,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch",
+                    "lessThan",
+                    "moreThan"
+                ]
+            }
+        },
+        "allowedStatTypes": "chromasCountPerSkin"
+    },
     "abilityDamageLvlRandom": {},
-    "abilityByIcon": {},
-    "abilityCooldown": {},
+    "abilityByIcon": {
+        "name": "Ability icons",
+        "collection": "spells",
+        "subjects": "champions",
+        "text": "Which champion has this ability icon?",
+        "difficulty": {
+            "easy": {
+                "allowedQuestionTypes": [
+                    "exactMatch"
+                ]
+            },
+            "medium": {
+                "allowedQuestionTypes": [
+                    "modifiedImage"
+                ],
+                "allowedModifications": [
+                    "colorless",
+                    "rotate"
+                ],
+                "modificationsCount": 1
+            },
+            "hard": {
+                "allowedQuestionTypes": [
+                    "modifiedImage"
+                ],
+                "allowedModifiactions": [
+                    "colorless",
+                    "mirror",
+                    "rotate"
+                ],
+                "modificationsCount": 2
+            },
+            "challenger": {
+                "allowedQuestionTypes": [
+                    "modifiedImage"
+                ],
+                "allowedModifiactions": [
+                    "colorless",
+                    "mirror",
+                    "rotate",
+                    "colorTwist"
+                ],
+                "modificationsCount": 3
+            }
+        }
+    },
+    "abilityCooldownLvl1": {},
+    "abilityCooldownLvlRandom": {},
     "abilityRange": {},
     "abilityName": {},
     "passiveName": {},

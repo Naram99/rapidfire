@@ -26,5 +26,23 @@
     "moreThan": {
         "text": "more than {{value}}",
         "multipleCorrect": true
+    },
+    "modifiedImage": {
+        "blur": {},
+        "colorless": {
+            "disable": "colorTwist"
+        },
+        "colorTwist": {
+            "disable": "colorless"
+        },
+        "zoom": {},
+        "mirror": {},
+        "rotate": {
+            "allowed": [
+                90,
+                180,
+                270
+            ]
+        }
     }
 }
