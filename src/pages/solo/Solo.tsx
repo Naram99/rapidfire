@@ -8,5 +8,5 @@ export default function Solo() {
 
     createGameCall({ rounds: 2 }).then((result) => console.log(result));
 
-    return <h1>Solo</h1>;
+    return <h1>Solo play</h1>;
 }
