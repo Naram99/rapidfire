@@ -25,7 +25,7 @@ export const joinLobbyCall = onCall(
         const lobbyRef = db.ref(`lobby/${lobbyId}`);
         const snapshot = await lobbyRef.get();
 
-        if (!snapshot.exists) {
+        if (!snapshot.exists()) {
             return { status: 404, message: "Lobby not found" };
         }
 

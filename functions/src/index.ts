@@ -14,6 +14,7 @@ import { createLobbyCall } from "./createLobby";
 import { joinLobbyCall } from "./joinLobby";
 import { updateCall } from "./update";
 import { leaveLobbyCall } from "./leaveLobby";
+import { createGameCall } from "./createGame";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -42,4 +43,5 @@ export const createLobby = createLobbyCall;
 export const joinLobby = joinLobbyCall;
 export const update = updateCall;
 export const leaveLobby = leaveLobbyCall;
+export const createGame = createGameCall;
 

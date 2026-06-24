@@ -169,12 +169,12 @@
             }
         ]
     },
-    "baseStatsLvlRandom": {},
+    "baseStatsLvlRandom": false,
     "skinNumber": {
         "name": "Number of skins",
         "collection": "skins",
         "subjects": "champions",
-        "text": "Which champion has {{questionType}} number of skins?",
+        "text": "Which champion has {{questionType}} skins?",
         "difficulty": {
             "easy": {
                 "percentMinDifference": 0.3,
@@ -218,8 +218,8 @@
         },
         "allowedStatTypes": "skinsCount"
     },
-    "skinType": {},
-    "skinModified": {},
+    "skinType": false,
+    "skinModified": false,
     "chromaNumber": {
         "name": "Number of chromas",
         "collection": "chromas",
@@ -268,7 +268,7 @@
         },
         "allowedStatTypes": "chromasCount"
     },
-    "chromaType": {},
+    "chromaType": false,
     "chromaPerSkin": {
         "name": "Chromas per skin",
         "collection": "chromas",
@@ -317,7 +317,7 @@
         },
         "allowedStatTypes": "chromasCountPerSkin"
     },
-    "abilityDamageLvlRandom": {},
+    "abilityDamageLvlRandom": false,
     "abilityByIcon": {
         "name": "Ability icons",
         "collection": "spells",
@@ -364,11 +364,94 @@
             }
         }
     },
-    "abilityCooldownLvl1": {},
-    "abilityCooldownLvlRandom": {},
-    "abilityRange": {},
-    "abilityName": {},
-    "passiveName": {},
-    "tags": {},
-    "title": {}
+    "abilityCooldownLvl1": {
+        "name": "Ability cooldowns level 1",
+        "collection": "spells",
+        "subjects": "spells",
+        "text": "Which ability has {{questionType}} cooldown at level 1?",
+        "difficulty": {
+            "easy": {
+                "percentMinDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
+            },
+            "medium": {
+                "percentMinDifference": 0.1,
+                "percentMaxDifference": 0.3,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "exactMatch"
+                ]
+            },
+            "hard": {
+                "percentMaxDifference": 0.1,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch"
+                ]
+            },
+            "challenger": {
+                "percentMaxDifference": 0.05,
+                "allowedQuestionTypes": [
+                    "min",
+                    "max",
+                    "min2nd",
+                    "max2nd",
+                    "exactMatch",
+                    "lessThan",
+                    "moreThan"
+                ]
+            }
+        },
+        "allowedStatTypes": "abilityCooldownLvl1"
+    },
+    "abilityCooldownLvlRandom": false,
+    "abilityRange": false,
+    "abilityName": {
+        "name": "Ability names",
+        "collection": "spells",
+        "subjects": "champions",
+        "text": "Which champion has this ability?",
+        "difficulty": {
+            "easy": {
+                "allowedQuestionTypes": [
+                    "exactMatch"
+                ]
+            }
+        }
+    },
+    "passiveName": {
+        "name": "Passive names",
+        "collection": "passive",
+        "subjects": "champions",
+        "text": "Which champion has this passive?",
+        "difficulty": {
+            "easy": {
+                "allowedQuestionTypes": [
+                    "exactMatch"
+                ]
+            }
+        }
+    },
+    "tags": false,
+    "title": {
+        "name": "Champion titles",
+        "collection": "title",
+        "subjects": "champions",
+        "text": "Which champion has this title?",
+        "difficulty": {
+            "easy": {
+                "allowedQuestionTypes": [
+                    "exactMatch"
+                ]
+            }
+        }
+    }
 }

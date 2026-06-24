@@ -27,6 +27,9 @@
         "text": "more than {{value}}",
         "multipleCorrect": true
     },
+    "multiSelect": {
+        "multipleCorrect": true
+    },
     "modifiedImage": {
         "blur": {},
         "colorless": {
