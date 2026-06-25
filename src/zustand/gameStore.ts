@@ -8,6 +8,8 @@ type Game = {
     rounds: {
         [index: number]: Round;
     };
+    isActive: boolean;
+    isFinished: boolean;
     lobby?: string;
 };
 

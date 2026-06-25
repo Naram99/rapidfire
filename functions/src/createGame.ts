@@ -10,6 +10,8 @@ type Game = {
     rounds: {
         [index: number]: Round;
     };
+    isActive: boolean;
+    isFinished: boolean;
     lobby?: string;
 };
 
@@ -33,6 +35,8 @@ export const createGameCall = onCall(
             id: crypto.randomUUID(),
             start: admin.database.ServerValue.TIMESTAMP,
             rounds: {},
+            isActive: true,
+            isFinished: false,
         };
 
         for (let i = 0; i < roundCount; i++) {
