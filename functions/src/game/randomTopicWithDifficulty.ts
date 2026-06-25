@@ -1,19 +1,46 @@
 import { Database } from "firebase-admin/database";
+import randomQuestionsForTopic, { Question } from "./randomQuestionsForTopic";
 
-type TopicWithDifficulty = {
+export type Round = {
     [topic: string]: {
         difficulty: string;
-        questions: {
-            question: string;
-            options: string[];
-            correct: string;
-        }[];
+        questions: Question[];
     };
 };
 
-export async function randomTopicWithDifficulty(
-    db: Database,
-): Promise<TopicWithDifficulty> {
+export type Topic = {
+    name: string;
+    collection: string;
+    subjects: string;
+    text: string;
+    difficulty: {
+        [d: string]: {
+            allowedQuestionTypes: {
+                [index: number | string]: string;
+            };
+            percentMinDifference?: number;
+            percentMaxDifference?: number;
+            allowedModifications?: {
+                [index: number | string]: string;
+            };
+            modificationsCount?: number;
+        };
+    };
+    allowedStatTypes:
+        | {
+              [index: number | string]: {
+                  stat: string;
+                  text: string;
+              };
+          }
+        | string;
+};
+
+type Topics = {
+    [name: string]: Topic;
+};
+
+export async function randomTopicWithDifficulty(db: Database): Promise<Round> {
     const topicsRef = db.ref(`topics`);
     const snapshot = await topicsRef.get();
 
@@ -21,7 +48,7 @@ export async function randomTopicWithDifficulty(
         throw new Error("Topics not found.");
     }
 
-    const topicsData = snapshot.val();
+    const topicsData = snapshot.val() as Topics;
     const allTopicNames = Object.keys(topicsData);
     const topicNames = allTopicNames.filter((name) => topicsData[name]);
 
@@ -37,7 +64,10 @@ export async function randomTopicWithDifficulty(
     return {
         [randomTopic]: {
             difficulty: randomDifficulty,
-            questions: [],
+            questions: await randomQuestionsForTopic(
+                db,
+                topicsData[randomTopic],
+            ),
         },
     };
 }

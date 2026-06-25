@@ -1,12 +1,18 @@
-import { httpsCallable } from "firebase/functions";
-import { fireBaseFunctions } from "../../firebase";
-
-const functions = fireBaseFunctions;
+import GameStore from "../../zustand/gameStore";
+import Loading from "../../Loading";
 
 export default function Solo() {
-    const createGameCall = httpsCallable(functions, "createGame");
+    const game = GameStore((state) => state.game);
+    const isGameLoading = GameStore((state) => state.isLoading);
 
-    createGameCall({ rounds: 2 }).then((result) => console.log(result));
+    if (isGameLoading) {
+        return <Loading />;
+    }
 
-    return <h1>Solo play</h1>;
+    return (
+        <div>
+            <h1>Solo play</h1>
+            <h2>{game?.id}</h2>
+        </div>
+    );
 }

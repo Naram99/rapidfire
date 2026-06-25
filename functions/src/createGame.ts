@@ -2,6 +2,16 @@ import * as logger from "firebase-functions/logger";
 import admin from "firebase-admin";
 import { onCall } from "firebase-functions/https";
 import { randomTopicWithDifficulty } from "./game/randomTopicWithDifficulty";
+import type { Round } from "./game/randomTopicWithDifficulty";
+
+type Game = {
+    id: string;
+    start: object;
+    rounds: {
+        [index: number]: Round;
+    };
+    lobby?: string;
+};
 
 admin.initializeApp();
 
@@ -19,24 +29,17 @@ export const createGameCall = onCall(
 
         const roundCount = request.data?.rounds ?? 1;
 
-        const rounds: {
-            [index: number]: {
-                [topic: string]: {
-                    difficulty: string;
-                    questions: {
-                        question: string;
-                        options: string[];
-                        correct: string;
-                    }[];
-                };
-            };
-        } = {};
+        const game: Game = {
+            id: crypto.randomUUID(),
+            start: admin.database.ServerValue.TIMESTAMP,
+            rounds: {},
+        };
 
         for (let i = 0; i < roundCount; i++) {
-            rounds[i] = await randomTopicWithDifficulty(db);
+            game.rounds[i] = await randomTopicWithDifficulty(db);
         }
         // TODO: game creation from topics
 
-        return { status: 201, rounds: rounds };
+        return { status: 201, game: game };
     },
 );
