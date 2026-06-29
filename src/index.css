@@ -50,6 +50,8 @@
     --ash-700: #2c2824;
     --ash-900: #141210;
 
+    /* SEMANTICS */
+
     --primary-bg: light-dark(var(--ember-500), var(--ember-400));
     --primary-text: light-dark(var(--ember-50), var(--ember-900));
     --primary-accent: light-dark(var(--ember-600), var(--ember-500));

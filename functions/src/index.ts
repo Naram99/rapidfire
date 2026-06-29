@@ -16,6 +16,12 @@ import { updateCall } from "./update";
 import { leaveLobbyCall } from "./leaveLobby";
 import { createGameCall } from "./createGame";
 
+import { sendFriendRequestCall } from "./sendFriendRequest";
+import { acceptFriendRequestCall } from "./acceptFriendRequest";
+import { denyFriendRequestCall } from "./denyFriendRequest";
+import { removeFriendCall } from "./removeFriend";
+import { migrateFriendRequestsCall } from "./migrateFriendRequests";
+
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
@@ -44,4 +50,10 @@ export const joinLobby = joinLobbyCall;
 export const update = updateCall;
 export const leaveLobby = leaveLobbyCall;
 export const createGame = createGameCall;
+
+export const sendFriendRequest = sendFriendRequestCall;
+export const acceptFriendRequest = acceptFriendRequestCall;
+export const denyFriendRequest = denyFriendRequestCall;
+export const removeFriend = removeFriendCall;
+export const migrateFriendRequests = migrateFriendRequestsCall;
 

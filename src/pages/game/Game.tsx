@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 
 export default function Game() {
-    const { gameId } = useParams();
+    const params = useParams();
 
-    return <h1>Game</h1>;
+    return <h1>Game {params.gameId ? `(${params.gameId})` : ""}</h1>;
 }

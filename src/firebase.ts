@@ -4,6 +4,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFunctions } from "firebase/functions";
 import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -27,3 +28,4 @@ export const analytics = getAnalytics(app);
 export const fireBaseAuth = getAuth(app);
 export const fireBaseFunctions = getFunctions(app, "europe-west1");
 export const fireBaseRealTimeDB = getDatabase(app);
+export const fireBaseStorage = getStorage(app);
