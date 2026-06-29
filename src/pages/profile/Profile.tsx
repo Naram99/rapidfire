@@ -6,6 +6,7 @@ import {
     denyFriendRequest,
     ensureUserProfile,
     getUserProfile,
+    getIncomingFriendRequests,
     removeFriend,
     reauthenticateUser,
     searchUsers,
@@ -52,8 +53,13 @@ export default function Profile() {
     );
 
     const [incomingRequests, setIncomingRequests] = useState<
-        Record<string, true>
-    >({});
+        Array<{
+            requestKey: string;
+            from: string;
+            to: string;
+            createdAt?: number;
+        }>
+    >([]);
     const [friends, setFriends] = useState<Record<string, true>>({});
 
     useEffect(() => {
@@ -73,8 +79,17 @@ export default function Profile() {
                 setProfile(dbProfile);
                 setDisplayNameInput(dbProfile.displayName || "");
                 setNewEmail(dbProfile.email || "");
-                setIncomingRequests(dbProfile.incomingFriendRequests || {});
                 setFriends(dbProfile.friends || {});
+                // Load incoming friend requests from flattened collection
+                try {
+                    const incoming = await getIncomingFriendRequests(
+                        dbProfile.uid,
+                    );
+                    setIncomingRequests(incoming);
+                } catch (e) {
+                    console.error("Failed to load incoming friend requests", e);
+                    setIncomingRequests([]);
+                }
             } catch (error) {
                 setErrorMessage("Unable to load profile. Please refresh.");
                 console.error(error);
@@ -122,10 +137,16 @@ export default function Profile() {
         const dbProfile = await getUserProfile(user.uid);
         if (dbProfile) {
             setProfile(dbProfile);
-            setIncomingRequests(dbProfile.incomingFriendRequests || {});
             setFriends(dbProfile.friends || {});
             setDisplayNameInput(dbProfile.displayName || "");
             setNewEmail(dbProfile.email || "");
+            try {
+                const incoming = await getIncomingFriendRequests(dbProfile.uid);
+                setIncomingRequests(incoming);
+            } catch (e) {
+                console.error("Failed to load incoming friend requests", e);
+                setIncomingRequests([]);
+            }
         }
     }
 
@@ -595,42 +616,34 @@ export default function Profile() {
 
                             <div className={styles.card}>
                                 <h3>Incoming requests</h3>
-                                {Object.keys(incomingRequests).length ? (
-                                    Object.keys(incomingRequests).map(
-                                        (requesterUid) => (
-                                            <div
-                                                key={requesterUid}
-                                                className={styles.resultRow}>
-                                                <p>
-                                                    {requesterUid.slice(0, 8)}
-                                                    ...
-                                                </p>
-                                                <div
-                                                    className={
-                                                        styles.rowButtons
+                                {incomingRequests.length ? (
+                                    incomingRequests.map((req) => (
+                                        <div
+                                            key={req.requestKey}
+                                            className={styles.resultRow}>
+                                            <p>{req.from.slice(0, 8)}...</p>
+                                            <div className={styles.rowButtons}>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleAcceptRequest(
+                                                            req.from,
+                                                        )
                                                     }>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            handleAcceptRequest(
-                                                                requesterUid,
-                                                            )
-                                                        }>
-                                                        Accept
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            handleDenyRequest(
-                                                                requesterUid,
-                                                            )
-                                                        }>
-                                                        Deny
-                                                    </button>
-                                                </div>
+                                                    Accept
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleDenyRequest(
+                                                            req.from,
+                                                        )
+                                                    }>
+                                                    Deny
+                                                </button>
                                             </div>
-                                        ),
-                                    )
+                                        </div>
+                                    ))
                                 ) : (
                                     <p className={styles.small}>
                                         No pending requests.
