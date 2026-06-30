@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router";
 import AuthStore from "../../zustand/authStore";
 import {
-    acceptFriendRequest,
-    denyFriendRequest,
+    acceptFriendRequestByKey,
+    denyFriendRequestByKey,
     ensureUserProfile,
+    getFriends,
     getUserProfile,
     getIncomingFriendRequests,
     removeFriend,
@@ -35,8 +36,25 @@ export default function Profile() {
 
     const [displayNameInput, setDisplayNameInput] = useState("");
     const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
-    const [photoPreview, setPhotoPreview] = useState<string>("");
     const [photoError, setPhotoError] = useState<string | null>(null);
+
+    const photoPreview = useMemo(() => {
+        if (selectedPhoto) {
+            return URL.createObjectURL(selectedPhoto);
+        }
+
+        return profile?.photoURL || "";
+    }, [selectedPhoto, profile?.photoURL]);
+
+    useEffect(() => {
+        if (!selectedPhoto) {
+            return;
+        }
+
+        return () => {
+            URL.revokeObjectURL(photoPreview);
+        };
+    }, [photoPreview, selectedPhoto]);
 
     const [newEmail, setNewEmail] = useState("");
     const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState("");
@@ -58,9 +76,10 @@ export default function Profile() {
             from: string;
             to: string;
             createdAt?: number;
+            requester: PublicProfile;
         }>
     >([]);
-    const [friends, setFriends] = useState<Record<string, true>>({});
+    const [friends, setFriends] = useState<PublicProfile[]>([]);
 
     useEffect(() => {
         if (!user) {
@@ -79,15 +98,19 @@ export default function Profile() {
                 setProfile(dbProfile);
                 setDisplayNameInput(dbProfile.displayName || "");
                 setNewEmail(dbProfile.email || "");
-                setFriends(dbProfile.friends || {});
-                // Load incoming friend requests from flattened collection
                 try {
-                    const incoming = await getIncomingFriendRequests(
-                        dbProfile.uid,
-                    );
+                    const [friendsList, incoming] = await Promise.all([
+                        getFriends(dbProfile.uid),
+                        getIncomingFriendRequests(dbProfile.uid),
+                    ]);
+                    setFriends(friendsList);
                     setIncomingRequests(incoming);
                 } catch (e) {
-                    console.error("Failed to load incoming friend requests", e);
+                    console.error(
+                        "Failed to load friends or incoming friend requests",
+                        e,
+                    );
+                    setFriends([]);
                     setIncomingRequests([]);
                 }
             } catch (error) {
@@ -103,27 +126,25 @@ export default function Profile() {
 
     useEffect(() => {
         if (!selectedPhoto) {
-            setPhotoPreview("");
             return;
         }
-
-        const objectUrl = URL.createObjectURL(selectedPhoto);
-        setPhotoPreview(objectUrl);
 
         return () => {
-            URL.revokeObjectURL(objectUrl);
+            URL.revokeObjectURL(photoPreview);
         };
-    }, [selectedPhoto]);
+    }, [photoPreview, selectedPhoto]);
 
-    useEffect(() => {
-        if (!user) {
-            return;
+    const publicProfile = useMemo(() => {
+        if (!profile) {
+            return null;
         }
 
-        if (profile?.photoURL) {
-            setPhotoPreview(profile.photoURL);
-        }
-    }, [profile, user]);
+        return {
+            displayName: profile.displayName || "Unknown",
+            email: profile.email || "",
+            photoURL: profile.photoURL || "",
+        };
+    }, [profile]);
 
     if (!user) {
         return <Navigate to="/login" replace />;
@@ -137,14 +158,21 @@ export default function Profile() {
         const dbProfile = await getUserProfile(user.uid);
         if (dbProfile) {
             setProfile(dbProfile);
-            setFriends(dbProfile.friends || {});
             setDisplayNameInput(dbProfile.displayName || "");
             setNewEmail(dbProfile.email || "");
             try {
-                const incoming = await getIncomingFriendRequests(dbProfile.uid);
+                const [friendsList, incoming] = await Promise.all([
+                    getFriends(dbProfile.uid),
+                    getIncomingFriendRequests(dbProfile.uid),
+                ]);
+                setFriends(friendsList);
                 setIncomingRequests(incoming);
             } catch (e) {
-                console.error("Failed to load incoming friend requests", e);
+                console.error(
+                    "Failed to load friends or incoming friend requests",
+                    e,
+                );
+                setFriends([]);
                 setIncomingRequests([]);
             }
         }
@@ -329,34 +357,56 @@ export default function Profile() {
         }
     }
 
-    async function handleAcceptRequest(requesterUid: string) {
+    async function handleAcceptRequest(request: {
+        requestKey: string;
+        from: string;
+        requester: PublicProfile;
+    }) {
         setErrorMessage(null);
         setSuccessMessage(null);
 
-        const currentUser = user as NonNullable<typeof user>;
+        const previousIncoming = incomingRequests;
+        const previousFriends = friends;
+
+        setIncomingRequests((requests) =>
+            requests.filter((item) => item.requestKey !== request.requestKey),
+        );
+        setFriends((existingFriends) => {
+            if (existingFriends.some((friend) => friend.uid === request.from)) {
+                return existingFriends;
+            }
+            return [...existingFriends, request.requester];
+        });
 
         try {
-            await acceptFriendRequest(currentUser.uid, requesterUid);
+            await acceptFriendRequestByKey(request.requestKey);
             setSuccessMessage("Friend request accepted.");
             await refreshProfile();
         } catch (error) {
             console.error(error);
+            setIncomingRequests(previousIncoming);
+            setFriends(previousFriends);
             setErrorMessage("Unable to accept friend request.");
         }
     }
 
-    async function handleDenyRequest(requesterUid: string) {
+    async function handleDenyRequest(request: { requestKey: string }) {
         setErrorMessage(null);
         setSuccessMessage(null);
 
-        const currentUser = user as NonNullable<typeof user>;
+        const previousIncoming = incomingRequests;
+
+        setIncomingRequests((requests) =>
+            requests.filter((item) => item.requestKey !== request.requestKey),
+        );
 
         try {
-            await denyFriendRequest(currentUser.uid, requesterUid);
+            await denyFriendRequestByKey(request.requestKey);
             setSuccessMessage("Friend request denied.");
             await refreshProfile();
         } catch (error) {
             console.error(error);
+            setIncomingRequests(previousIncoming);
             setErrorMessage("Unable to deny friend request.");
         }
     }
@@ -365,10 +415,8 @@ export default function Profile() {
         setErrorMessage(null);
         setSuccessMessage(null);
 
-        const currentUser = user as NonNullable<typeof user>;
-
         try {
-            await removeFriend(currentUser.uid, friendUid);
+            await removeFriend(friendUid);
             setSuccessMessage("Friend removed.");
             await refreshProfile();
             setSelectedFriend(null);
@@ -389,18 +437,6 @@ export default function Profile() {
             });
         }
     }
-
-    const publicProfile = useMemo(() => {
-        if (!profile) {
-            return null;
-        }
-
-        return {
-            displayName: profile.displayName || "Unknown",
-            email: profile.email || "",
-            photoURL: profile.photoURL || "",
-        };
-    }, [profile]);
 
     return (
         <div className={styles.profileCt}>
@@ -621,23 +657,31 @@ export default function Profile() {
                                         <div
                                             key={req.requestKey}
                                             className={styles.resultRow}>
-                                            <p>{req.from.slice(0, 8)}...</p>
+                                            <div>
+                                                <p>
+                                                    {req.requester
+                                                        .displayName ||
+                                                        req.requester.email ||
+                                                        `${req.from.slice(0, 8)}...`}
+                                                </p>
+                                                {req.requester.email && (
+                                                    <p className={styles.small}>
+                                                        {req.requester.email}
+                                                    </p>
+                                                )}
+                                            </div>
                                             <div className={styles.rowButtons}>
                                                 <button
                                                     type="button"
                                                     onClick={() =>
-                                                        handleAcceptRequest(
-                                                            req.from,
-                                                        )
+                                                        handleAcceptRequest(req)
                                                     }>
                                                     Accept
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={() =>
-                                                        handleDenyRequest(
-                                                            req.from,
-                                                        )
+                                                        handleDenyRequest(req)
                                                     }>
                                                     Deny
                                                 </button>
@@ -653,18 +697,29 @@ export default function Profile() {
 
                             <div className={styles.card}>
                                 <h3>Friends</h3>
-                                {Object.keys(friends).length ? (
-                                    Object.keys(friends).map((friendUid) => (
+                                {friends.length ? (
+                                    friends.map((friend) => (
                                         <div
-                                            key={friendUid}
+                                            key={friend.uid}
                                             className={styles.resultRow}>
-                                            <p>{friendUid.slice(0, 8)}...</p>
+                                            <div>
+                                                <p>
+                                                    {friend.displayName ||
+                                                        friend.email ||
+                                                        `${friend.uid.slice(0, 8)}...`}
+                                                </p>
+                                                {friend.email && (
+                                                    <p className={styles.small}>
+                                                        {friend.email}
+                                                    </p>
+                                                )}
+                                            </div>
                                             <div className={styles.rowButtons}>
                                                 <button
                                                     type="button"
                                                     onClick={() =>
                                                         openFriendPreview(
-                                                            friendUid,
+                                                            friend.uid,
                                                         )
                                                     }>
                                                     View profile
@@ -673,7 +728,7 @@ export default function Profile() {
                                                     type="button"
                                                     onClick={() =>
                                                         handleRemoveFriend(
-                                                            friendUid,
+                                                            friend.uid,
                                                         )
                                                     }>
                                                     Remove

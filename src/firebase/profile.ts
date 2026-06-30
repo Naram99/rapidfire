@@ -166,9 +166,15 @@ export async function searchUsers(queryText: string): Promise<PublicProfile[]> {
     return Object.values(results);
 }
 
-export async function getIncomingFriendRequests(
-    uid: string,
-): Promise<Array<{ requestKey: string; from: string; to: string; createdAt?: number }>> {
+export async function getIncomingFriendRequests(uid: string): Promise<
+    Array<{
+        requestKey: string;
+        from: string;
+        to: string;
+        createdAt?: number;
+        requester: PublicProfile;
+    }>
+> {
     const byUserRef = ref(fireBaseRealTimeDB, `friendRequestsByUser/${uid}`);
     const byUserSnap = await get(byUserRef);
     if (!byUserSnap.exists()) {
@@ -178,27 +184,77 @@ export async function getIncomingFriendRequests(
     const keys = Object.keys(byUserSnap.val() as Record<string, true>);
     const requestsRaw = await Promise.all(
         keys.map(async (key) => {
-            const reqSnap = await get(ref(fireBaseRealTimeDB, `friendRequests/${key}`));
+            const reqSnap = await get(
+                ref(fireBaseRealTimeDB, `friendRequests/${key}`),
+            );
             if (!reqSnap.exists()) return null;
             const val = reqSnap.val();
             if (val.status !== "pending") return null;
+            const requesterProfile = await getUserProfile(val.from);
             return {
                 requestKey: key,
                 from: val.from,
                 to: val.to,
                 createdAt: val.createdAt,
+                requester: {
+                    uid: val.from,
+                    displayName: requesterProfile?.displayName,
+                    email: requesterProfile?.email,
+                    photoURL: requesterProfile?.photoURL,
+                },
             };
         }),
     );
 
-    const requests = requestsRaw as Array<
-        | { requestKey: string; from: unknown; to: unknown; createdAt?: unknown }
-        | null
-    >;
+    const requests = requestsRaw as Array<{
+        requestKey: string;
+        from: unknown;
+        to: unknown;
+        createdAt?: unknown;
+        requester: PublicProfile;
+    } | null>;
 
     return requests.filter(
-        (r): r is { requestKey: string; from: string; to: string; createdAt?: number } =>
-            r !== null && typeof r.from === "string" && typeof r.to === "string",
+        (
+            r,
+        ): r is {
+            requestKey: string;
+            from: string;
+            to: string;
+            createdAt?: number;
+            requester: PublicProfile;
+        } =>
+            r !== null &&
+            typeof r.from === "string" &&
+            typeof r.to === "string",
+    );
+}
+
+export async function getFriends(uid: string): Promise<PublicProfile[]> {
+    const friendsRef = ref(fireBaseRealTimeDB, `friends/${uid}`);
+    const friendsSnap = await get(friendsRef);
+    if (!friendsSnap.exists()) {
+        return [];
+    }
+
+    const friendIds = Object.keys(friendsSnap.val() as Record<string, unknown>);
+    const profiles: Array<PublicProfile | null> = await Promise.all(
+        friendIds.map(async (friendUid) => {
+            const profile = await getUserProfile(friendUid);
+            if (!profile) {
+                return null;
+            }
+            return {
+                uid: friendUid,
+                displayName: profile.displayName,
+                email: profile.email,
+                photoURL: profile.photoURL,
+            };
+        }),
+    );
+
+    return profiles.filter(
+        (profile): profile is PublicProfile => profile !== null,
     );
 }
 
@@ -215,9 +271,17 @@ export async function sendFriendRequest(
         await fn({ toUid: targetUid });
         return;
     } catch (err: unknown) {
-        // Normalize error
-        const message = err instanceof Error ? err.message : "Unable to send friend request.";
-        throw new Error(message, { cause: err as Error | undefined });
+        const message =
+            err instanceof Error
+                ? err.message
+                : "Unable to send friend request.";
+        const normalizedError = new Error(message) as Error & {
+            cause?: unknown;
+        };
+        if (err instanceof Error) {
+            normalizedError.cause = err;
+        }
+        throw normalizedError;
     }
 }
 
@@ -234,8 +298,39 @@ export async function acceptFriendRequest(
         await fn({ requestKey });
         return;
     } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Unable to accept friend request.";
-        throw new Error(message, { cause: err as Error | undefined });
+        const message =
+            err instanceof Error
+                ? err.message
+                : "Unable to accept friend request.";
+        const normalizedError = new Error(message) as Error & {
+            cause?: unknown;
+        };
+        if (err instanceof Error) {
+            normalizedError.cause = err;
+        }
+        throw normalizedError;
+    }
+}
+
+export async function acceptFriendRequestByKey(
+    requestKey: string,
+): Promise<void> {
+    try {
+        const fn = httpsCallable(fireBaseFunctions, "acceptFriendRequest");
+        await fn({ requestKey });
+        return;
+    } catch (err: unknown) {
+        const message =
+            err instanceof Error
+                ? err.message
+                : "Unable to accept friend request.";
+        const normalizedError = new Error(message) as Error & {
+            cause?: unknown;
+        };
+        if (err instanceof Error) {
+            normalizedError.cause = err;
+        }
+        throw normalizedError;
     }
 }
 
@@ -251,8 +346,39 @@ export async function denyFriendRequest(
         await fn({ requestKey });
         return;
     } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Unable to deny friend request.";
-        throw new Error(message, { cause: err as Error | undefined });
+        const message =
+            err instanceof Error
+                ? err.message
+                : "Unable to deny friend request.";
+        const normalizedError = new Error(message) as Error & {
+            cause?: unknown;
+        };
+        if (err instanceof Error) {
+            normalizedError.cause = err;
+        }
+        throw normalizedError;
+    }
+}
+
+export async function denyFriendRequestByKey(
+    requestKey: string,
+): Promise<void> {
+    try {
+        const fn = httpsCallable(fireBaseFunctions, "denyFriendRequest");
+        await fn({ requestKey });
+        return;
+    } catch (err: unknown) {
+        const message =
+            err instanceof Error
+                ? err.message
+                : "Unable to deny friend request.";
+        const normalizedError = new Error(message) as Error & {
+            cause?: unknown;
+        };
+        if (err instanceof Error) {
+            normalizedError.cause = err;
+        }
+        throw normalizedError;
     }
 }
 
@@ -262,8 +388,15 @@ export async function removeFriend(friendUid: string): Promise<void> {
         await fn({ friendId: friendUid });
         return;
     } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Unable to remove friend.";
-        throw new Error(message, { cause: err as Error | undefined });
+        const message =
+            err instanceof Error ? err.message : "Unable to remove friend.";
+        const normalizedError = new Error(message) as Error & {
+            cause?: unknown;
+        };
+        if (err instanceof Error) {
+            normalizedError.cause = err;
+        }
+        throw normalizedError;
     }
 }
 
